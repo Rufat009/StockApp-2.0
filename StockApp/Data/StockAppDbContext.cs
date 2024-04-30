@@ -1,4 +1,5 @@
 
+using Microsoft.EntityFrameworkCore;
 using StockApp.Models;
 
 namespace StockApp.Data;

@@ -10,6 +10,6 @@ public class Product
     public string? Description { get; set; }
     public int? Count { get; set; }
 
-    public List<ProductCategory> Categories { get; set; }
+    public List<ProductCategory> ProductCategories { get; set; }
 
 }
