@@ -7,13 +7,13 @@ using StockApp.Models;
 namespace StockApp.Repositories.Base;
 
 
-public interface IProductsRepository<TEntity>
+public interface IProductsRepository
 {
-    IEnumerable<TEntity> GetAll();
+    Task<IEnumerable<Product>> GetAll();
 
-    Task AddAsync(TEntity product);
+    Task AddAsync(Product product);
 
-    Task UpdateAsync(TEntity product);
+    Task UpdateAsync(Product product);
 
     Task DeleteAsync(int id);
 

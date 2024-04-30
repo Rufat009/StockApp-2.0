@@ -8,7 +8,7 @@ using StockApp.Repositories.Base;
 
 namespace StockApp.Repositories;
 
-public class ProductRepository : IProductsRepository<Product>
+public class ProductRepository : IProductsRepository
 {
     private readonly StockAppDbContext dbContext;
 
@@ -17,18 +17,18 @@ public class ProductRepository : IProductsRepository<Product>
         this.dbContext = dbContext;
     }
 
-    public IEnumerable<Product> GetAll()
+    public async Task<IEnumerable<Product>> GetAll()
     {
-        return dbContext.Products.Include(p => p.ProductCategories)
+        return await dbContext.Products.Include(p => p.ProductCategories)
                                  .ThenInclude(pc => pc.Category)
-                                 .ToList();
+                                 .ToListAsync();
     }
 
-    public Product GetById(int id)
+    public async Task<Product> GetById(int id)
     {
-        return dbContext.Products.Include(p => p.ProductCategories)
+        return await dbContext.Products.Include(p => p.ProductCategories)
                                  .ThenInclude(pc => pc.Category)
-                                 .FirstOrDefault(p => p.Id == id);
+                                 .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task AddAsync(Product product)

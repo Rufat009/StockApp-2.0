@@ -5,7 +5,7 @@ namespace StockApp.Services.Base;
 
 public interface IProductService
 {
-    public IEnumerable<Product> GetAllProducts();
+    public Task<IEnumerable<Product>> GetAllProducts();
     public Task AddProductAsync(Product product);
     public Task UpdateProductAsync(Product product);
     public Task DeleteProductAsync(int id);

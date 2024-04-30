@@ -4,21 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using StockApp.Models;
 using StockApp.Repositories.Base;
+using StockApp.Services.Base;
 
 namespace StockApp.Services;
 
-public class ProductService
+public class ProductService : IProductService
 {
-    private readonly IProductsRepository<Product> productRepository;
+    private readonly IProductsRepository productRepository;
 
-    public ProductService(IProductsRepository<Product> productRepository)
+    public ProductService(IProductsRepository productRepository)
     {
         this.productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
     }
 
-    public IEnumerable<Product> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProducts()
     {
-        return productRepository.GetAll();
+        return await productRepository.GetAll();
     }
 
     public async Task AddProductAsync(Product product)

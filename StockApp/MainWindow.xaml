@@ -6,7 +6,36 @@
         xmlns:local="clr-namespace:StockApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+<Grid>
+        <TabControl>
+            <TabItem Header="Products">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DataGrid x:Name="ProductsDataGrid" Grid.Row="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Button Content="Add Product" Click="AddProduct_Click"/>
+                        <Button Content="Update Product" Click="UpdateProduct_Click"/>
+                        <Button Content="Delete Product" Click="DeleteProduct_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Categories">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DataGrid x:Name="CategoriesDataGrid" Grid.Row="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Button Content="Add Category" Click="AddCategory_Click"/>
+                        <Button Content="Update Category" Click="UpdateCategory_Click"/>
+                        <Button Content="Delete Category" Click="DeleteCategory_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

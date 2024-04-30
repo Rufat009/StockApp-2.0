@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using StockApp.Models;
 using StockApp.Repositories.Base;
+using StockApp.Services.Base;
 
 namespace StockApp.Services;
 
-public class CategoryService
+public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository categoryRepository;
 

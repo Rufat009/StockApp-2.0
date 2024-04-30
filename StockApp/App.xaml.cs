@@ -1,11 +1,14 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using SimpleInjector;
 using StockApp.Data;
 using StockApp.Models;
 using StockApp.Repositories;
 using StockApp.Repositories.Base;
+using StockApp.Services;
+using StockApp.Services.Base;
 
 namespace StockApp;
 
@@ -28,14 +31,19 @@ namespace StockApp;
             //startView.ShowDialog();
 
         }
-
+     
         private void ConfigureContainer()
         {
-            ServiceContainer.RegisterSingleton<IProductsRepository<Product>, ProductRepository>();
-
             ServiceContainer.RegisterSingleton<StockAppDbContext>();
 
+            ServiceContainer.RegisterSingleton<IProductsRepository, ProductRepository>();
+            ServiceContainer.RegisterSingleton<ICategoryRepository, CategoryRepository>();
+
+            ServiceContainer.RegisterSingleton<IProductService, ProductService>();
+            ServiceContainer.RegisterSingleton<ICategoryService, CategoryService>();
+          
             ServiceContainer.Verify();
+
         }
 
 
