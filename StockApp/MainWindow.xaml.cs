@@ -18,22 +18,21 @@ namespace StockApp;
 /// </summary>
 public partial class MainWindow : Window
 {
+    public static Product SelectedProduct { get; set; }
+    public static Category SelectedCategory { get; set; }
     private readonly IProductService productService;
     private readonly ICategoryService categoryService;
-
-    public MainWindow(IProductService productService, ICategoryService categoryService)
-    {
-        InitializeComponent();
-        this.productService = productService;
-        this.categoryService = categoryService;
-        DataContext = this;
-        LoadData();
-    }
 
     public MainWindow()
     {
         InitializeComponent();
+        this.productService = App.ServiceContainer.GetInstance<IProductService>();
+        this.categoryService = App.ServiceContainer.GetInstance<ICategoryService>();
+        DataContext = this;
+        LoadData();
     }
+
+
     private async void LoadData()
     {
         ProductsDataGrid.ItemsSource = await productService.GetAllProducts();
@@ -42,14 +41,19 @@ public partial class MainWindow : Window
 
     private void AddProduct_Click(object sender, RoutedEventArgs e)
     {
-        // Implement your Add Product logic here
+        var addProductWindow = new AddProductWindow();
+        addProductWindow.ShowDialog();
+        LoadData();
     }
 
     private void UpdateProduct_Click(object sender, RoutedEventArgs e)
     {
         if (ProductsDataGrid.SelectedItem is Product selectedProduct)
         {
-            // Implement your Update Product logic here, using selectedProduct
+            SelectedProduct = selectedProduct;
+            var updateProductWindow = new UpdateProductWindow();
+            updateProductWindow.ShowDialog();
+            LoadData();
         }
     }
 
@@ -64,14 +68,19 @@ public partial class MainWindow : Window
 
     private void AddCategory_Click(object sender, RoutedEventArgs e)
     {
-        // Implement your Add Category logic here
+        var addCategoryWindow = new AddCategoryWindow();
+        addCategoryWindow.ShowDialog();
+        LoadData();
     }
 
     private void UpdateCategory_Click(object sender, RoutedEventArgs e)
     {
         if (CategoriesDataGrid.SelectedItem is Category selectedCategory)
         {
-            // Implement your Update Category logic here, using selectedCategory
+            SelectedCategory = selectedCategory;
+            var updateCategoryWindow = new UpdateCategoryWindow();
+            updateCategoryWindow.ShowDialog();
+            LoadData();
         }
     }
 

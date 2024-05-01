@@ -29,7 +29,9 @@ public class StockAppDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string connectionString = $"Server=localhost;Database=StockApp;User Id=admin;Password=admin;TrustServerCertificate=True;";
+
         optionsBuilder.UseSqlServer(connectionString);
+
         base.OnConfiguring(optionsBuilder);
     }
 }
