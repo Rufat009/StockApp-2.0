@@ -64,8 +64,34 @@ public class ProductRepository : IProductsRepository
         {
             await connection.OpenAsync();
 
-            var sql = "SELECT * FROM Products WHERE Name LIKE @Name";
-            return (await connection.QueryAsync<Product>(sql, new { Name = $"%{searchProduct}%" })).ToList();
+            var sql = @"SELECT p.*, c.* 
+                    FROM Products p
+                    LEFT JOIN ProductCategories pc ON p.Id = pc.ProductId
+                    LEFT JOIN Categories c ON pc.CategoryId = c.Id
+                    WHERE p.Name LIKE @Name";
+
+            var productDictionary = new Dictionary<int, Product>();
+
+            var list = await connection.QueryAsync<Product, Category, Product>(
+                sql,
+                (product, category) =>
+                {
+                    Product productEntry;
+
+                    if (!productDictionary.TryGetValue(product.Id, out productEntry))
+                    {
+                        productEntry = product;
+                        productEntry.ProductCategories = new List<ProductCategory>();
+                        productDictionary.Add(productEntry.Id, productEntry);
+                    }
+
+                    productEntry.ProductCategories.Add(new ProductCategory { Category = category });
+                    return productEntry;
+                },
+                new { Name = $"%{searchProduct}%" },
+                splitOn: "Id");
+
+            return list.Distinct();
         }
     }
 

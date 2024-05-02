@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,6 +24,8 @@ public partial class MainWindow : Window
     public static Category SelectedCategory { get; set; }
     private readonly IProductService productService;
     private readonly ICategoryService categoryService;
+
+
 
     public MainWindow()
     {
@@ -92,4 +96,20 @@ public partial class MainWindow : Window
             LoadData();
         }
     }
+
+    private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var searchProduct = SearchTextBox.Text;
+        if (string.IsNullOrWhiteSpace(searchProduct))
+        {
+            LoadData();
+            return;
+        }
+        var products = await productService.SearchProductAsync(searchProduct);
+
+
+        ProductsDataGrid.ItemsSource = products;
+    }
+
+
 }

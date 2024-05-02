@@ -25,7 +25,7 @@ public partial class AddProductWindow : Window
     private readonly IProductService productService;
     private readonly ICategoryService categoryService;
 
-    public  AddProductWindow()
+    public AddProductWindow()
     {
         InitializeComponent();
 
@@ -37,25 +37,30 @@ public partial class AddProductWindow : Window
     private async void LoadCategories()
     {
         var categories = await categoryService.GetAllCategoriesAsync();
-        CategoriesListBox.ItemsSource = categories?? new List<Category>();
+        CategoriesListBox.ItemsSource = categories ?? new List<Category>();
         CategoriesListBox.DisplayMemberPath = "Name";
         CategoriesListBox.SelectedValuePath = "Id";
     }
 
     private async void AddProductButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!int.TryParse(CountTextBox.Text, out var count))
+        {
+            MessageBox.Show("Please enter a valid number for the count.");
+            return;
+        }
+
         var product = new Product
         {
             Name = NameTextBox.Text,
             Description = DescriptionTextBox.Text,
-            Count = int.TryParse(CountTextBox.Text, out var count) ? count : (int?)null,
+            Count = count,
             ProductCategories = CategoriesListBox.SelectedItems.Cast<Category>().Select(c => new ProductCategory { CategoryId = c.Id }).ToList()
         };
 
-       await productService.AddProductAsync(product);
+        await productService.AddProductAsync(product);
 
         MessageBox.Show("Product added successfully!");
         this.Close();
-
     }
 }
