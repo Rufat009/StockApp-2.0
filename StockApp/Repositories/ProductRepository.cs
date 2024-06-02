@@ -50,49 +50,18 @@ public class ProductRepository : IProductsRepository
     {
         var product = dbContext.Products.FirstOrDefault(p => p.Id == id);
 
-        if (product != null)
-        {
-            dbContext.Products.Remove(product);
+        
+            dbContext.Products.Remove(product!);
 
             await dbContext.SaveChangesAsync();
-        }
+        
     }
 
     public async Task<IEnumerable<Product>> SearchAsync(string searchProduct)
     {
-        using (var connection = new SqlConnection(App.connectionString))
-        {
-            await connection.OpenAsync();
+        var products = await dbContext.Products.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).Where(p => p.Name.Contains(searchProduct)).ToListAsync();
 
-            var sql = @"SELECT p.*, c.* 
-                    FROM Products p
-                    LEFT JOIN ProductCategories pc ON p.Id = pc.ProductId
-                    LEFT JOIN Categories c ON pc.CategoryId = c.Id
-                    WHERE p.Name LIKE @Name";
-
-            var productDictionary = new Dictionary<int, Product>();
-
-            var list = await connection.QueryAsync<Product, Category, Product>(
-                sql,
-                (product, category) =>
-                {
-                    Product productEntry;
-
-                    if (!productDictionary.TryGetValue(product.Id, out productEntry))
-                    {
-                        productEntry = product;
-                        productEntry.ProductCategories = new List<ProductCategory>();
-                        productDictionary.Add(productEntry.Id, productEntry);
-                    }
-
-                    productEntry.ProductCategories.Add(new ProductCategory { Category = category });
-                    return productEntry;
-                },
-                new { Name = $"%{searchProduct}%" },
-                splitOn: "Id");
-
-            return list.Distinct();
-        }
+        return products;
     }
 
     public async Task<IEnumerable<Product>> FilterByCategoriesAsync(List<int> categoryIds)
@@ -105,7 +74,9 @@ public class ProductRepository : IProductsRepository
             INNER JOIN ProductCategory pc ON p.Id = pc.ProductId
             WHERE pc.CategoryId IN @CategoryIds";
 
-            return (await connection.QueryAsync<Product>(sql, new { CategoryIds = categoryIds })).ToList();
+            var products =  (await connection.QueryAsync<Product>(sql, new { CategoryIds = categoryIds })).ToList();
+
+            return products;
         }
     }
 }
