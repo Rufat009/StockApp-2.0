@@ -50,11 +50,11 @@ public class ProductRepository : IProductsRepository
     {
         var product = dbContext.Products.FirstOrDefault(p => p.Id == id);
 
-        
-            dbContext.Products.Remove(product!);
 
-            await dbContext.SaveChangesAsync();
-        
+        dbContext.Products.Remove(product!);
+
+        await dbContext.SaveChangesAsync();
+
     }
 
     public async Task<IEnumerable<Product>> SearchAsync(string searchProduct)
@@ -66,17 +66,17 @@ public class ProductRepository : IProductsRepository
 
     public async Task<IEnumerable<Product>> FilterByCategoriesAsync(List<int> categoryIds)
     {
-        using (var connection = new SqlConnection(App.connectionString))
-        {
-            await connection.OpenAsync();
+        var connection = new SqlConnection(App.connectionString);
+        await connection.OpenAsync();
 
-            var sql = @"SELECT p.* FROM Products p
-            INNER JOIN ProductCategory pc ON p.Id = pc.ProductId
-            WHERE pc.CategoryId IN @CategoryIds";
+        var sql = @"SELECT p.* FROM Products p
+                    INNER JOIN ProductCategory pc ON p.Id = pc.ProductId
+                    WHERE pc.CategoryId IN @CategoryIds";
 
-            var products =  (await connection.QueryAsync<Product>(sql, new { CategoryIds = categoryIds })).ToList();
+        var products = (await connection.QueryAsync<Product>(sql, new { CategoryIds = categoryIds })).ToList();
 
-            return products;
-        }
+        connection.Close();
+
+        return products;
     }
 }
